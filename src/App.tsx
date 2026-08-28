@@ -8,6 +8,7 @@ import { Tag } from './pages/Tag'
 import { Admin } from './pages/Admin'
 import { Winner } from './pages/Winner'
 import { Final } from './pages/Final'
+import { PhaseAnnouncer } from './components/PhaseAnnouncer'
 
 function Nav() {
   const { pathname } = useLocation()
@@ -52,6 +53,7 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Nav />
+      <PhaseAnnouncer />
     </HashRouter>
   )
 }

@@ -8,6 +8,7 @@ import {
   getPhase,
   listEvents,
   listPlayers,
+  playerEvents,
   setPhase,
   type GameEvent,
   type Player,
@@ -16,12 +17,15 @@ import { ELEMENT_INFO } from '../game/elements'
 import { PHASE_LABEL, PHASE_ORDER, nextPhase, type Phase } from '../game/phases'
 import { TAGS } from '../game/tags'
 import { QRSheet } from '../components/QRSheet'
+import { EventHistory } from '../components/EventHistory'
 
 export function Admin() {
   const [players, setPlayers] = useState<Player[]>([])
   const [events, setEvents] = useState<GameEvent[]>([])
   const [phase, setPhaseState] = useState<Phase>('SETUP')
   const [tab, setTab] = useState<'players' | 'phases' | 'tags' | 'events' | 'qr'>('players')
+  const [openHistory, setOpenHistory] = useState<string | null>(null)
+  const [history, setHistory] = useState<GameEvent[]>([])
 
   const refresh = useCallback(async () => {
     const [p, e, ph] = await Promise.all([listPlayers(), listEvents(60), getPhase()])
@@ -37,6 +41,15 @@ export function Admin() {
   }, [refresh])
 
   const nameOf = (id: string | null) => players.find((p) => p.id === id)?.name ?? '—'
+
+  async function toggleHistory(playerId: string) {
+    if (openHistory === playerId) {
+      setOpenHistory(null)
+      return
+    }
+    setOpenHistory(playerId)
+    setHistory(await playerEvents(playerId))
+  }
 
   return (
     <div className="app" style={{ maxWidth: 640 }}>
@@ -79,7 +92,14 @@ export function Admin() {
                   onClick={async () => { await adminCompleteMission(p.id); refresh() }}>
                   Mission +150
                 </button>
+                <button className="btn ghost" style={{ width: 'auto', padding: '8px 10px' }}
+                  onClick={() => toggleHistory(p.id)}>
+                  {openHistory === p.id ? 'Hide history' : 'History'}
+                </button>
               </div>
+              {openHistory === p.id && (
+                <EventHistory events={history} playerId={p.id} nameOf={nameOf} empty="No activity for this player yet." />
+              )}
             </div>
           ))}
           {players.length === 0 && <div className="muted">No players yet.</div>}

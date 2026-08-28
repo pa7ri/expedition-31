@@ -18,6 +18,16 @@ export const PHASE_LABEL: Record<Phase, string> = {
   ENDED: 'Ended',
 }
 
+/** Full-screen announcement shown to every player when the phase changes (Realtime). */
+export const PHASE_ANNOUNCEMENT: Record<Phase, { title: string; body: string } | null> = {
+  SETUP: null,
+  BAR_1: { title: 'THE ELEMENTS AWAKEN', body: 'Bar 1 begins. Seek energy, allies and artifacts.' },
+  TRANSITION: { title: 'THE PORTAL OPENS', body: 'Find the explorers of your element and cross together.' },
+  BAR_2: { title: 'THE ELEMENTAL WAR', body: 'Bar 2. All rewards grow. Legendary powers unlock.' },
+  FINAL: { title: 'THE COLLAPSE NEARS', body: 'Make your final gamble. Scores are about to lock.' },
+  ENDED: { title: 'THE ELEMENTS COLLAPSE', body: 'The expedition is over. Behold the champion.' },
+}
+
 /**
  * Which tag types are scannable in each phase.
  * PORTAL is the physical transition tag; ENERGY/BATTLE/ALLIANCE/ARTIFACT/MYSTERY run in both bars;

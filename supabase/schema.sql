@@ -95,3 +95,11 @@ begin
     execute format('create policy anon_all on %I for all to anon using (true) with check (true);', t);
   end loop;
 end $$;
+
+-- Realtime: broadcast phase changes so every player's app reacts instantly (usePhase.ts).
+-- Safe to re-run; ignores the "already in publication" error.
+do $$
+begin
+  alter publication supabase_realtime add table game_state;
+exception when duplicate_object then null;
+end $$;

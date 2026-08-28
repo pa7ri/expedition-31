@@ -179,6 +179,14 @@ export async function resolveScan(player: Player, code: string): Promise<TagResu
 
   const phase = await getPhase()
   if (!canScan(tag.type, phase)) {
+    if (phase === 'FINAL' || phase === 'ENDED') {
+      return {
+        ok: false,
+        title: 'The Collapse',
+        message: 'Scores are locked. The expedition is decided — head to the ranks for the champion.',
+        tag,
+      }
+    }
     return { ok: false, title: tag.title, message: 'This marker is dormant right now. Come back later.', tag }
   }
 
@@ -248,8 +256,15 @@ export async function submitBattle(attacker: Player, code: string, defenderId: s
   )
   for (const d of deltas) await applyDelta(d)
   await recordScan(attacker.id, code, { type: 'BATTLE', defenderId, summary })
-  await logEvent('BATTLE', attacker.id, defender.id, { summary, attackerWon })
-  const mine = deltas.find((d) => d.playerId === attacker.id)!.amount
+  const attackerAmt = deltas.find((d) => d.playerId === attacker.id)!.amount
+  const defenderAmt = deltas.find((d) => d.playerId === defender.id)!.amount
+  await logEvent('BATTLE', attacker.id, defender.id, {
+    summary,
+    attackerWon,
+    sourceAmount: attackerAmt,
+    targetAmount: defenderAmt,
+  })
+  const mine = attackerAmt
   return {
     ok: true,
     title: tag.title,
@@ -347,8 +362,9 @@ async function resolveGroupSession(
   for (const m of members) {
     await applyDelta({ playerId: m.player_id, amount: reward })
     await recordScan(m.player_id, tag.code, { type: 'GROUP', reward })
+    // One event per member so each player's personal history shows their reward.
+    await logEvent('GROUP', m.player_id, null, { code: tag.code, reward, amount: reward, size: members.length })
   }
-  await logEvent('GROUP', members[0].player_id, null, { code: tag.code, reward, size: members.length })
   return { ok: true, title: tag.title, message: `The four elements unite! +${reward} each.`, delta: reward, tag }
 }
 
@@ -368,8 +384,13 @@ export async function submitConvergence(code: string, betrayerId: string | null)
   for (const d of deltas) {
     await applyDelta(d)
     await recordScan(d.playerId, code, { type: 'CONVERGENCE', amount: d.amount, betrayerId })
+    // One event per member with their own amount, flagged if they were the betrayer.
+    await logEvent('CONVERGENCE', d.playerId, null, {
+      amount: d.amount,
+      share: !betrayerId,
+      betrayed: d.playerId === betrayerId,
+    })
   }
-  await logEvent('CONVERGENCE', betrayerId, null, { betrayerId, share: !betrayerId })
   return {
     ok: true,
     title: tag.title,
@@ -388,7 +409,12 @@ export async function submitCollapse(player: Player, code: string, target: Eleme
   const victims = (data as { id: string }[]) ?? []
   for (const v of victims) await applyDelta({ playerId: v.id, amount: -150, negative: true })
   await recordScan(player.id, code, { type: 'COLLAPSE', target })
-  await logEvent('COLLAPSE', player.id, null, { target, count: victims.length })
+  // Attacker's event (they triggered it) plus one per victim showing their loss.
+  await logEvent('COLLAPSE', player.id, null, { target, count: victims.length, triggered: true })
+  for (const v of victims) {
+    if (v.id === player.id) continue
+    await logEvent('COLLAPSE', null, v.id, { target, amount: -150 })
+  }
   return { ok: true, title: tag.title, message: `☄️ The Collapse strikes ${target}! ${victims.length} explorer(s) lose 150.`, tag }
 }
 
@@ -458,6 +484,17 @@ export async function adminSetTagActive(code: string, active: boolean): Promise<
 
 export async function listEvents(limit = 50): Promise<GameEvent[]> {
   const { data } = await supabase.from('events').select('*').order('created_at', { ascending: false }).limit(limit)
+  return (data as GameEvent[]) ?? []
+}
+
+/** Events where the player is either the source or the target — their personal history. */
+export async function playerEvents(playerId: string, limit = 50): Promise<GameEvent[]> {
+  const { data } = await supabase
+    .from('events')
+    .select('*')
+    .or(`source_player.eq.${playerId},target_player.eq.${playerId}`)
+    .order('created_at', { ascending: false })
+    .limit(limit)
   return (data as GameEvent[]) ?? []
 }
 

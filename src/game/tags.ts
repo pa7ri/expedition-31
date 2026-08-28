@@ -143,3 +143,18 @@ export const ARTIFACT_INFO: Record<Artifact, { emoji: string; name: string }> = 
   ANCIENT_ROOT: { emoji: '🌿', name: 'Ancient Root' },
   EYE_OF_THE_STORM: { emoji: '🌪️', name: 'Eye of the Storm' },
 }
+
+/**
+ * Visual theme per tag type, used by the printable sticker sheet. Each type gets an emblem,
+ * a short kind label and an accent hue so the physical stickers read like a fantasy card set.
+ */
+export const TAG_THEME: Record<TagType, { emblem: string; kind: string; accent: string; hint: string }> = {
+  ENERGY: { emblem: '💎', kind: 'Energy Relic', accent: '#e0a53a', hint: 'Scan to absorb its power' },
+  BATTLE: { emblem: '⚔️', kind: 'Battle Rune', accent: '#c0392b', hint: 'Scan, then choose a rival' },
+  ALLIANCE: { emblem: '🤝', kind: 'Alliance Seal', accent: '#2e86c1', hint: 'Two must scan together' },
+  ARTIFACT: { emblem: '🧿', kind: 'Ancient Artifact', accent: '#8e44ad', hint: 'Claim a one-time power' },
+  MYSTERY: { emblem: '🧩', kind: 'Mystery Sigil', accent: '#16a085', hint: 'Fortune favours the curious' },
+  LEGENDARY: { emblem: '👑', kind: 'Legendary Mark', accent: '#b7791f', hint: 'Bar 2 only — immense power' },
+  CHAOS: { emblem: '🎲', kind: 'Chaos Glyph', accent: '#d35400', hint: 'Roll the dice of fate' },
+  PORTAL: { emblem: '🌀', kind: 'The Portal', accent: '#5b3fb0', hint: 'Cross to the next realm' },
+}
