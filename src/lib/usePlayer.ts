@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { getPlayerByToken, getInventory, playerRank, type InventoryItem, type Player } from '../lib/api'
-import { getSessionToken } from '../lib/session'
+import { getSessionToken, clearSession } from '../lib/session'
 
 /** Loads the logged-in player (by localStorage token) plus rank and inventory, with a refresh(). */
 export function usePlayer() {
@@ -17,12 +17,18 @@ export function usePlayer() {
       return
     }
     const p = await getPlayerByToken(token)
-    setPlayer(p)
-    if (p) {
-      const [r, inv] = await Promise.all([playerRank(p.id), getInventory(p.id)])
-      setRank(r)
-      setInventory(inv)
+    if (!p) {
+      // Token points at a player that no longer exists (e.g. the game was reset).
+      // Drop the stale session so we don't ping-pong between Home and Game.
+      clearSession()
+      setPlayer(null)
+      setLoading(false)
+      return
     }
+    setPlayer(p)
+    const [r, inv] = await Promise.all([playerRank(p.id), getInventory(p.id)])
+    setRank(r)
+    setInventory(inv)
     setLoading(false)
   }, [])
 

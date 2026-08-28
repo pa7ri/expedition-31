@@ -1,12 +1,35 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
-import { getSessionToken } from '../lib/session'
+import { useEffect, useState } from 'react'
+import { getSessionToken, clearSession } from '../lib/session'
+import { getPlayerByToken } from '../lib/api'
 
 export function Home() {
   const nav = useNavigate()
+  const [checked, setChecked] = useState(false)
+
   useEffect(() => {
-    if (getSessionToken()) nav('/game', { replace: true })
+    let live = true
+    const token = getSessionToken()
+    if (!token) {
+      setChecked(true)
+      return
+    }
+    // Only redirect if the token still maps to a real player. After a game reset the
+    // player rows are gone, so a stale token would otherwise bounce us in a loop.
+    getPlayerByToken(token).then((p) => {
+      if (!live) return
+      if (p) nav('/game', { replace: true })
+      else {
+        clearSession()
+        setChecked(true)
+      }
+    })
+    return () => {
+      live = false
+    }
   }, [nav])
+
+  if (!checked) return <div className="app center muted" style={{ marginTop: 60 }}>Loading…</div>
 
   return (
     <div className="app center">
