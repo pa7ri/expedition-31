@@ -4,7 +4,7 @@
  * the scanning player's element and the tag's definition here.
  *
  * Distribution: 4 Energy, 3 Battle, 3 Alliance, 3 Artifact, 3 Mystery, 2 Legendary, 1 Chaos.
- * Plus 1 Portal tag for the Bar 1 → Bar 2 transition (§22). Total = 20 codes.
+ * Plus 1 Portal tag for the Burza #4 → Bike Jesus transition (§22). Total = 20 codes.
  * Interactive markers (require a follow-up action): 3 Battle + 3 Alliance + Temple + Convergence
  * + Collapse + Chaos = 10.
  */
@@ -108,7 +108,7 @@ export const TAGS: TagDef[] = [
   { code: 'E02M', type: 'MYSTERY', title: '📜 Forgotten Scroll', description: 'An old scroll rewards the curious.', energy: { FIRE: 100, WATER: 100, EARTH: 100, AIR: 100 } },
   { code: 'E03M', type: 'MYSTERY', title: '🕯️ Whispering Shrine', description: 'The shrine grants a small boon to all who find it.', energy: { FIRE: 100, WATER: 100, EARTH: 100, AIR: 100 } },
 
-  // ── 👑 LEGENDARY (2) — Bar 2 only (§24, §25) ──
+  // ── 👑 LEGENDARY (2) — Bike Jesus only (§24, §25) ──
   {
     code: 'F01C',
     type: 'LEGENDARY',
@@ -154,7 +154,7 @@ export const TAG_THEME: Record<TagType, { emblem: string; kind: string; accent: 
   ALLIANCE: { emblem: '🤝', kind: 'Alliance Seal', accent: '#2e86c1', hint: 'Two must scan together' },
   ARTIFACT: { emblem: '🧿', kind: 'Ancient Artifact', accent: '#8e44ad', hint: 'Claim a one-time power' },
   MYSTERY: { emblem: '🧩', kind: 'Mystery Sigil', accent: '#16a085', hint: 'Fortune favours the curious' },
-  LEGENDARY: { emblem: '👑', kind: 'Legendary Mark', accent: '#b7791f', hint: 'Bar 2 only — immense power' },
+  LEGENDARY: { emblem: '👑', kind: 'Legendary Mark', accent: '#b7791f', hint: 'Bike Jesus only — immense power' },
   CHAOS: { emblem: '🎲', kind: 'Chaos Glyph', accent: '#d35400', hint: 'Roll the dice of fate' },
   PORTAL: { emblem: '🌀', kind: 'The Portal', accent: '#5b3fb0', hint: 'Cross to the next realm' },
 }

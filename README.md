@@ -97,9 +97,9 @@ https://<user>.github.io/expedition-31/#/tag?tag=CODE
 | 🤝 Alliance | `C01R` `C02R` `C03R` | Two players scan within 120 s |
 | 🧿 Artifact | `D01A` `D02A` `D03A` | One-time powers |
 | 🧩 Mystery | `E01T` (Temple, group) `E02M` `E03M` | Temple needs all 4 elements |
-| 👑 Legendary | `F01C` (Convergence) `F02X` (Collapse) | Bar 2 only |
+| 👑 Legendary | `F01C` (Convergence) `F02X` (Collapse) | Bike Jesus only |
 | 🎲 Chaos | `G01H` | Element-independent gamble |
-| 🌑 Portal | `P0RT` | Bar 1 → Bar 2 transition |
+| 🌑 Portal | `P0RT` | Burza #4 → Bike Jesus transition |
 
 > **Interactive markers** (require a follow-up action after scanning): the 3 Battle, 3 Alliance,
 > Temple, Convergence, Collapse, and Chaos tags = **10**. The rest resolve instantly on scan.
@@ -112,10 +112,10 @@ https://<user>.github.io/expedition-31/#/tag?tag=CODE
 Everything is driven from **`/#/admin`** (bookmark it — there's no link from the player UI).
 
 1. **SETUP** — players open the app, register (name + element). No markers active yet.
-2. **BAR_1** — advance the phase. Energy / battle / alliance / artifact / mystery / chaos go live.
+2. **BAR_1 (Burza #4)** — advance the phase. Energy / battle / alliance / artifact / mystery / chaos go live.
    Midway, tell everyone "the elements have awakened."
-3. **TRANSITION** — advance. Only the Portal tag scans; each element walks together to Bar 2.
-4. **BAR_2** — advance. Everything reopens **plus** the two Legendary markers.
+3. **TRANSITION** — advance. Only the Portal tag scans; each element walks together to Bike Jesus.
+4. **BAR_2 (Bike Jesus)** — advance. Everything reopens **plus** the two Legendary markers.
 5. **FINAL** — advance, then send everyone to **`/#/final`** for the private gamble.
 6. **ENDED** — reveal **`/#/winner`** on a big screen.
 
@@ -160,15 +160,15 @@ from the player UI).
 
 | # | Do this | Expected |
 |---|---------|----------|
-| 1 | Admin → **phases** tab → **Bar 1** | Markers go live |
+| 1 | Admin → **phases** tab → **Burza #4** | Markers go live |
 | 2 | Register 🔥/💧/🌿/🌪️ in 4 windows | Each starts at ⚡100 |
 | 3 | Open `#/tag?tag=A11F` | 🔥+100 · 💧+75 · 🌿+125 · 🌪️+100 |
 | 4 | Open `#/tag?tag=B01D`, pick a rival | Circle decides: winner +150, loser −75; re-scan blocked |
 | 5 | Open `#/tag?tag=D01A` | Artifact lands in inventory |
 | 6 | Open `#/tag?tag=C01R` in **two** windows within 120 s | Different elements +100 each |
 | 7 | Open `#/tag?tag=E01T` in **all four** windows within 120 s | Temple unites → +200 each |
-| 8 | Try `#/tag?tag=F01C` now | Blocked — Legendary is Bar 2 only |
-| 9 | Admin → advance to **Bar 2** | Legendary unlocks |
+| 8 | Try `#/tag?tag=F01C` now | Blocked — Legendary is Bike Jesus only |
+| 9 | Admin → advance to **Bike Jesus** | Legendary unlocks |
 | 10 | `#/tag?tag=F01C` (all four) → **Share** or **Betray** | Share +300 each / Betray +600 vs +150 |
 | 11 | `#/tag?tag=F02X` → destroy an element | Those players −150 |
 | 12 | `#/tag?tag=G01H` → Roll | Weighted dice outcome |
