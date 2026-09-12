@@ -23,7 +23,7 @@ export function PlayerCard({
       style={{ borderColor: info.color, ['--el-glow' as string]: glow(info.color, 0.3) }}
     >
       <div className="profile-aura" aria-hidden />
-      <div className="center tracked muted" style={{ fontSize: 12 }}>🧭 Birthday Quest</div>
+      <div className="center tracked muted" style={{ fontSize: 12 }}>Birthday Quest</div>
       <div className="center" style={{ margin: '10px 0 6px' }}>
         <Sigil element={player.element} size={84} />
       </div>
@@ -49,7 +49,7 @@ export function PlayerCard({
       <div className="muted">{power.vulnerable}</div>
 
       <div className="divider" />
-      <div className="tracked muted" style={{ fontSize: 12 }}>🎒 Inventory</div>
+      <div className="tracked muted" style={{ fontSize: 12 }}>Inventory</div>
       {inventory.length === 0 ? (
         <div className="muted" style={{ marginTop: 6 }}>Empty</div>
       ) : (
@@ -64,7 +64,7 @@ export function PlayerCard({
       )}
 
       <div className="divider" />
-      <div className="tracked muted" style={{ fontSize: 12 }}>🕵️ Secret Mission</div>
+      <div className="tracked muted" style={{ fontSize: 12 }}>Secret Mission</div>
       <div style={{ marginTop: 6 }}>{SECRET_MISSION[player.element]}</div>
       <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>Complete it for +150 (confirmed by the host).</div>
     </div>

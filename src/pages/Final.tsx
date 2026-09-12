@@ -11,9 +11,9 @@ import { CountUp } from '../components/fx/CountUp'
 import { listContainer, listItem } from '../fx/variants'
 
 const CHOICES: { key: FinalChoice; label: string; sub: string; accent: string; variant: 'default' | 'danger' }[] = [
-  { key: 'STABILITY', label: '🛡️ Stability', sub: 'Keep your score.', accent: '#4caf6d', variant: 'default' },
-  { key: 'POWER', label: '🔥 Power', sub: '50%: +75%. Else −25%.', accent: '#ff5b35', variant: 'default' },
-  { key: 'CHAOS', label: '☄️ Chaos', sub: '33%: ×3. Else −50%.', accent: '#b98cff', variant: 'danger' },
+  { key: 'STABILITY', label: 'Stability', sub: 'Keep your score.', accent: '#4caf6d', variant: 'default' },
+  { key: 'POWER', label: 'Power', sub: '50%: +75%. Else −25%.', accent: '#ff5b35', variant: 'default' },
+  { key: 'CHAOS', label: 'Chaos', sub: '33%: ×3. Else −50%.', accent: '#b98cff', variant: 'danger' },
 ]
 
 export function Final() {
@@ -38,7 +38,7 @@ export function Final() {
       <div className="app center">
         <ParticleReveal kind={outcome.won ? 'LEGENDARY' : 'CHAOS'} play />
         <RevealCard tagType="LEGENDARY" element={player.element} accent={outcome.won ? '#e9c46a' : '#ff4d6d'}>
-          <h2>💥 The Elements Collapse</h2>
+          <h2>The Elements Collapse</h2>
           <div className="energy display" style={{ fontSize: 48 }}>
             <CountUp value={outcome.newScore} from={outcome.from} />
           </div>
@@ -50,7 +50,7 @@ export function Final() {
                 : 'The gamble did not favour you.'}
           </p>
         </RevealCard>
-        <ArcaneButton variant="primary" onClick={() => nav('/winner')}>See the champion 🏆</ArcaneButton>
+        <ArcaneButton variant="primary" onClick={() => nav('/winner')}>See the champion</ArcaneButton>
       </div>
     )
   }
@@ -58,7 +58,7 @@ export function Final() {
   return (
     <div className="app center">
       <div className="card">
-        <h2 className="display tracked">🌑 The Elemental Collapse</h2>
+        <h2 className="display tracked">The Elemental Collapse</h2>
         <p className="muted">One final choice. Everyone chooses privately, then scores lock.</p>
         <div className="energy display">⚡ {player.score}</div>
       </div>

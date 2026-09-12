@@ -54,7 +54,7 @@ export function Admin() {
   return (
     <div className="app" style={{ maxWidth: 640 }}>
       <div className="row no-print">
-        <h2>🧑‍✈️ Admin</h2>
+        <h2>Admin</h2>
         <span className="pill">{PHASE_LABEL[phase]}</span>
       </div>
 
@@ -161,7 +161,7 @@ export function Admin() {
       {tab === 'qr' && (
         <div>
           <div className="no-print" style={{ marginBottom: 12 }}>
-            <button className="btn" onClick={() => window.print()}>🖨️ Print QR sheet</button>
+            <button className="btn" onClick={() => window.print()}>Print QR sheet</button>
             <p className="muted" style={{ fontSize: 12 }}>Print, cut out, and place each QR at its marker. Also write the same URL to the matching NFC tag.</p>
           </div>
           <QRSheet />

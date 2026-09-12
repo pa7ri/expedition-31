@@ -1,6 +1,12 @@
 import { useEffect, useRef } from 'react'
 import QRCode from 'qrcode'
 import { TAGS, TAG_THEME, type TagDef } from '../game/tags'
+import { TagGlyph } from './fx/TagGlyph'
+
+/** Strip a leading emoji (+ following space) from a title so printed cards read as clean text. */
+function plainTitle(title: string): string {
+  return title.replace(/^[^\p{L}\p{N}]+/u, '').trim()
+}
 
 /** Builds the full scan URL for a tag code using the current origin + hash route. */
 export function tagUrl(code: string): string {
@@ -30,10 +36,10 @@ function Sticker({ tag }: { tag: TagDef }) {
     <div className="sticker" style={{ ['--accent' as string]: theme.accent }}>
       <div className="sticker-frame">
         <div className="sticker-head">
-          <span className="sticker-emblem">{theme.emblem}</span>
+          <span className="sticker-emblem"><TagGlyph type={tag.type} size={22} /></span>
           <span className="sticker-kind">{theme.kind}</span>
         </div>
-        <div className="sticker-title">{tag.title}</div>
+        <div className="sticker-title">{plainTitle(tag.title)}</div>
         <div className="sticker-qr">
           <canvas ref={ref} />
         </div>

@@ -122,7 +122,7 @@ function BattleFlow({ player, code, onResolved }: { player: Player; code: string
     <div className="app">
       <div className="card" style={{ textAlign: 'center' }}>
         <div className="reveal-kind" style={{ color: 'var(--fire)' }}>Battle</div>
-        <h2>⚔️ Elemental Battle</h2>
+        <h2>Elemental Battle</h2>
         <p className="muted">Choose another explorer to challenge.</p>
         <div className="stack" style={{ marginTop: 10 }}>
           {players.map((p) => (
@@ -228,14 +228,14 @@ function ConvergenceChoice({ player, code, onResolved }: { player: Player; code:
     <div className="app">
       <RevealCard tagType="LEGENDARY" element={player.element}>
         <div className="reveal-kind">Convergence</div>
-        <h2>⚡ The Elements Have United</h2>
+        <h2>The Elements Have United</h2>
         <p className="muted">+300 each if you share. Or one explorer betrays for +600 while the rest get +150.</p>
         <div className="stack" style={{ marginTop: 12 }}>
           <ArcaneButton disabled={busy} onClick={async () => { setBusy(true); onResolved(await submitConvergence(code, null)) }}>
-            🤝 SHARE — everyone keeps +300
+            SHARE — everyone keeps +300
           </ArcaneButton>
           <ArcaneButton variant="danger" disabled={busy} onClick={async () => { setBusy(true); onResolved(await submitConvergence(code, player.id)) }}>
-            😈 BETRAY — I take +600
+            BETRAY — I take +600
           </ArcaneButton>
         </div>
       </RevealCard>
@@ -251,7 +251,7 @@ function CollapseFlow({ player, code, onResolved }: { player: Player; code: stri
     <div className="app">
       <RevealCard tagType="LEGENDARY" element={player.element} accent="#c0392b">
         <div className="reveal-kind" style={{ color: '#ff5b35' }}>The Collapse</div>
-        <h2>☄️ The Collapse</h2>
+        <h2>The Collapse</h2>
         <p className="muted">You wield the final elemental weapon. Choose an element to destroy — all its players lose 150.</p>
         <div style={{ marginTop: 12 }}>
           <ElementPicker
@@ -278,7 +278,7 @@ function ChaosFlow({ player, code, onResolved }: { player: Player; code: string;
     <div className="app">
       <RevealCard tagType="CHAOS" element={player.element}>
         <div className="reveal-kind">Chaos</div>
-        <h2>🌀 Chaos</h2>
+        <h2>Chaos</h2>
         <p className="muted">Your element does not matter here. Roll the dice of fate.</p>
         <motion.div
           style={{ fontSize: 64, margin: '10px 0' }}
@@ -288,7 +288,7 @@ function ChaosFlow({ player, code, onResolved }: { player: Player; code: string;
           🎲
         </motion.div>
         <ArcaneButton variant="primary" disabled={busy} onClick={async () => { setBusy(true); onResolved(await submitChaos(player, code)) }}>
-          🎲 Roll
+          Roll
         </ArcaneButton>
       </RevealCard>
     </div>

@@ -68,7 +68,7 @@ export function Register() {
         accent={element ? ELEMENT_INFO[element].color : undefined}
         onClick={submit}
       >
-        {busy ? 'Awakening…' : 'Awaken my element ⚡'}
+        {busy ? 'Awakening…' : 'Awaken my element'}
       </ArcaneButton>
     </div>
   )

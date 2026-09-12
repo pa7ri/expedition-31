@@ -9,7 +9,7 @@ const MEDAL = ['🥇', '🥈', '🥉']
 export function Leaderboard({ rows, highlightId }: { rows: LeaderRow[]; highlightId?: string }) {
   return (
     <div className="card">
-      <div className="tracked center display" style={{ color: 'var(--gold)' }}>🏆 Expedition</div>
+      <div className="tracked center display" style={{ color: 'var(--gold)' }}>Expedition</div>
       <motion.div style={{ marginTop: 10 }} variants={listContainer} initial="initial" animate="enter">
         {rows.map((r) => {
           const info = ELEMENT_INFO[r.element]

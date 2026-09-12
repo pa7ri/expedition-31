@@ -62,7 +62,7 @@ export function Home() {
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
-        <Link className="btn primary" to="/register">Begin the Expedition ⚡</Link>
+        <Link className="btn primary" to="/register">Begin the Expedition</Link>
       </motion.div>
     </div>
   )
