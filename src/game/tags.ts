@@ -1,18 +1,19 @@
 /**
- * The 20 physical tags (spec §7). Each has a stable `code` that appears in the NFC/QR URL
+ * The 20 physical tags (spec §7). Each has a stable `code` that appears in the QR URL
  * (`/#/tag?tag=CODE`). The tag itself carries no reward — the app decides the outcome based on
  * the scanning player's element and the tag's definition here.
  *
- * Distribution: 4 Energy, 3 Battle, 3 Alliance, 3 Artifact, 3 Mystery, 2 Legendary, 1 Chaos.
- * Plus 1 Portal tag for the Burza #4 → Bike Jesus transition (§22). Total = 20 codes.
- * Interactive markers (require a follow-up action): 3 Battle + 3 Alliance + Temple + Convergence
- * + Collapse + Chaos = 10.
+ * Distribution: 2 Energy, 2 Poison, 3 Battle, 3 Alliance, 3 Artifact, 3 Mystery, 2 Legendary,
+ * 1 Chaos. Plus 1 Portal tag for the Burza #4 → Bike Jesus transition (§22). Total = 20 codes.
+ * Interactive markers (require a follow-up action): 3 Battle + 3 Alliance + 2 Poison + Temple
+ * + Convergence + Collapse + Chaos = 12.
  */
 
 import type { Element } from './elements'
 
 export type TagType =
   | 'ENERGY'
+  | 'POISON'
   | 'BATTLE'
   | 'ALLIANCE'
   | 'ARTIFACT'
@@ -30,7 +31,8 @@ export interface TagDef {
   /** Flavor / narrative text shown on scan. */
   description: string
   /**
-   * ENERGY: per-element payout. Balanced so every element totals 400 across the 4 energy tags.
+   * ENERGY: per-element payout. POISON: per-element penalty (negative values). Both read this
+   * same map keyed by the scanning player's element.
    */
   energy?: Record<Element, number>
   /** ARTIFACT: which artifact this tag grants. */
@@ -51,7 +53,7 @@ export const ALLIANCE_SAME = 25
 export const GROUP_WINDOW_SECONDS = 120
 
 export const TAGS: TagDef[] = [
-  // ── 💰 ENERGY (4) — balanced: each element sums to 400 across these four ──
+  // ── 💰 ENERGY (2) — per-element gains ──
   {
     code: 'A11F',
     type: 'ENERGY',
@@ -66,19 +68,21 @@ export const TAGS: TagDef[] = [
     description: 'A cache of smouldering embers responds to your touch.',
     energy: { FIRE: 125, WATER: 100, EARTH: 100, AIR: 75 },
   },
+
+  // ── ☠️ POISON (2) — per-element penalties. Opt-in: take it or walk away. ──
   {
     code: 'A33S',
-    type: 'ENERGY',
-    title: '💧 Hidden Spring',
-    description: 'A hidden spring bubbles up, its waters answering your call.',
-    energy: { FIRE: 100, WATER: 125, EARTH: 75, AIR: 100 },
+    type: 'POISON',
+    title: '🧪 Cursed Spring',
+    description: 'The spring runs black and bitter. Drink its power, or walk away untouched?',
+    energy: { FIRE: -100, WATER: -50, EARTH: -75, AIR: -125 },
   },
   {
     code: 'A44Z',
-    type: 'ENERGY',
-    title: '🌪️ Zephyr Font',
-    description: 'A font of swirling wind offers up its power.',
-    energy: { FIRE: 75, WATER: 100, EARTH: 100, AIR: 125 },
+    type: 'POISON',
+    title: '🌫️ Toxic Gale',
+    description: 'A poisonous wind swirls with tainted energy. Breathe it in, or turn away?',
+    energy: { FIRE: -75, WATER: -125, EARTH: -100, AIR: -50 },
   },
 
   // ── ⚔️ BATTLE (3) ── (identical mechanics; multiple tags let people duel in parallel)
@@ -150,6 +154,7 @@ export const ARTIFACT_INFO: Record<Artifact, { emoji: string; name: string }> = 
  */
 export const TAG_THEME: Record<TagType, { emblem: string; kind: string; accent: string; hint: string }> = {
   ENERGY: { emblem: '💎', kind: 'Energy Relic', accent: '#e0a53a', hint: 'Scan to absorb its power' },
+  POISON: { emblem: '☠️', kind: 'Cursed Relic', accent: '#7bb342', hint: 'Scan — then take it or walk away' },
   BATTLE: { emblem: '⚔️', kind: 'Battle Rune', accent: '#c0392b', hint: 'Scan, then choose a rival' },
   ALLIANCE: { emblem: '🤝', kind: 'Alliance Seal', accent: '#2e86c1', hint: 'Two must scan together' },
   ARTIFACT: { emblem: '🧿', kind: 'Ancient Artifact', accent: '#8e44ad', hint: 'Claim a one-time power' },

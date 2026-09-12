@@ -46,6 +46,9 @@ export function particleForReveal(type: TagType | undefined, element: Element): 
   switch (type) {
     case 'ARTIFACT':
       return 'ARTIFACT'
+    case 'POISON':
+      // No dedicated poison preset — the murky chaos burst reads as a curse well enough.
+      return 'CHAOS'
     case 'MYSTERY':
       return 'MYSTERY'
     case 'CHAOS':

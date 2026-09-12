@@ -9,6 +9,7 @@ import { Tag } from './pages/Tag'
 import { Admin } from './pages/Admin'
 import { Winner } from './pages/Winner'
 import { Final } from './pages/Final'
+import { CameraScanner } from './components/CameraScanner'
 import { PhaseAnnouncer } from './components/PhaseAnnouncer'
 import { ArcaneBackground } from './components/fx/ArcaneBackground'
 import { pageVariants } from './fx/variants'
@@ -57,7 +58,7 @@ function AnimatedRoutes() {
           <Route path="/register" element={<Register />} />
           <Route path="/game" element={<Game />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
-          <Route path="/scan" element={<ScanHelp />} />
+          <Route path="/scan" element={<CameraScanner />} />
           <Route path="/tag" element={<Tag />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/final" element={<Final />} />
@@ -78,19 +79,5 @@ export default function App() {
       <Nav />
       <PhaseAnnouncer />
     </HashRouter>
-  )
-}
-
-function ScanHelp() {
-  return (
-    <div className="app">
-      <div className="card center">
-        <h2>Scan a marker</h2>
-        <p className="muted">
-          Hold your phone to an NFC marker, or scan its QR code with your camera. The marker will
-          open the expedition and reveal what happens for your element.
-        </p>
-      </div>
-    </div>
   )
 }

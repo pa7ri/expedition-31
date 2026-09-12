@@ -162,7 +162,7 @@ export function Admin() {
         <div>
           <div className="no-print" style={{ marginBottom: 12 }}>
             <button className="btn" onClick={() => window.print()}>Print QR sheet</button>
-            <p className="muted" style={{ fontSize: 12 }}>Print, cut out, and place each QR at its marker. Also write the same URL to the matching NFC tag.</p>
+            <p className="muted" style={{ fontSize: 12 }}>Print, cut out, and place each QR at its marker.</p>
           </div>
           <QRSheet />
         </div>

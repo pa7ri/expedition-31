@@ -35,9 +35,9 @@ export const PHASE_ANNOUNCEMENT: Record<Phase, { title: string; body: string } |
  */
 const SCANNABLE: Record<Phase, TagType[]> = {
   SETUP: [],
-  BAR_1: ['ENERGY', 'BATTLE', 'ALLIANCE', 'ARTIFACT', 'MYSTERY', 'CHAOS'],
+  BAR_1: ['ENERGY', 'POISON', 'BATTLE', 'ALLIANCE', 'ARTIFACT', 'MYSTERY', 'CHAOS'],
   TRANSITION: ['PORTAL'],
-  BAR_2: ['ENERGY', 'BATTLE', 'ALLIANCE', 'ARTIFACT', 'MYSTERY', 'LEGENDARY', 'CHAOS'],
+  BAR_2: ['ENERGY', 'POISON', 'BATTLE', 'ALLIANCE', 'ARTIFACT', 'MYSTERY', 'LEGENDARY', 'CHAOS'],
   FINAL: [],
   ENDED: [],
 }

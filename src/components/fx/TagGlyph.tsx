@@ -25,6 +25,15 @@ export function TagGlyph({ type, size = 22 }: { type: TagType; size?: number }) 
           <path d="M3 9h18M9 4l3 16M15 4l-3 16" />
         </svg>
       )
+    case 'POISON': // skull
+      return (
+        <svg {...common}>
+          <path d="M12 3a7 7 0 0 0-4 12.7V18a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3A7 7 0 0 0 12 3z" />
+          <circle cx="9.3" cy="12" r="1.4" fill="currentColor" stroke="none" />
+          <circle cx="14.7" cy="12" r="1.4" fill="currentColor" stroke="none" />
+          <path d="M10 20v2M14 20v2" />
+        </svg>
+      )
     case 'BATTLE': // crossed swords
       return (
         <svg {...common}>

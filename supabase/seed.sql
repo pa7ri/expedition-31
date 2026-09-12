@@ -5,8 +5,8 @@
 insert into tags (code, type, title, active) values
   ('A11F','ENERGY','💎 Elemental Crystal', true),
   ('A22E','ENERGY','🔥 Ember Cache', true),
-  ('A33S','ENERGY','💧 Hidden Spring', true),
-  ('A44Z','ENERGY','🌪️ Zephyr Font', true),
+  ('A33S','POISON','🧪 Cursed Spring', true),
+  ('A44Z','POISON','🌫️ Toxic Gale', true),
   ('B01D','BATTLE','⚔️ Elemental Battle', true),
   ('B02D','BATTLE','⚔️ Elemental Battle', true),
   ('B03D','BATTLE','⚔️ Elemental Duel', true),

@@ -60,7 +60,7 @@ export interface TagResult {
   message: string
   delta?: number
   /** Signals the UI to render an interactive step (pick target, choose share/betray, etc.). */
-  interactive?: 'BATTLE_PICK' | 'ALLIANCE_WAIT' | 'GROUP_WAIT' | 'CONVERGENCE_CHOICE' | 'COLLAPSE_CHOICE' | 'CHAOS_ROLL'
+  interactive?: 'BATTLE_PICK' | 'ALLIANCE_WAIT' | 'GROUP_WAIT' | 'CONVERGENCE_CHOICE' | 'COLLAPSE_CHOICE' | 'CHAOS_ROLL' | 'POISON_CHOICE'
   tag?: TagDef
 }
 
@@ -201,6 +201,9 @@ export async function resolveScan(player: Player, code: string): Promise<TagResu
     case 'MYSTERY':
       if (tag.requiresGroup) return { ok: true, title: tag.title, message: tag.description, interactive: 'GROUP_WAIT', tag }
       return resolveEnergy(player, tag)
+    case 'POISON':
+      // Opt-in: the player chooses to take it or walk away. Nothing is recorded until they decide.
+      return { ok: true, title: tag.title, message: tag.description, interactive: 'POISON_CHOICE', tag }
     case 'ARTIFACT':
       return resolveArtifact(player, tag)
     case 'BATTLE':
@@ -225,6 +228,30 @@ async function resolveEnergy(player: Player, tag: TagDef): Promise<TagResult> {
   await recordScan(player.id, tag.code, { type: 'ENERGY', amount })
   await logEvent('ENERGY', player.id, null, { code: tag.code, amount })
   return { ok: true, title: tag.title, message: `${tag.description}`, delta: amount, tag }
+}
+
+/** POISON: apply the negative per-element amount when the player chooses to take it. */
+export async function submitPoison(player: Player, code: string): Promise<TagResult> {
+  const tag = getTag(code)!
+  if (await alreadyScanned(player.id, code)) {
+    return { ok: false, title: tag.title, message: 'You have already faced this marker.', tag }
+  }
+  const amount = tag.energy ? tag.energy[player.element] : 0
+  await applyDelta({ playerId: player.id, amount, negative: amount < 0 })
+  await recordScan(player.id, code, { type: 'POISON', amount })
+  await logEvent('POISON', player.id, null, { code, amount })
+  return { ok: true, title: tag.title, message: 'The poison courses through you.', delta: amount, tag }
+}
+
+/** POISON: the player walks away — no effect, but the marker is spent (can't retry). */
+export async function declinePoison(player: Player, code: string): Promise<TagResult> {
+  const tag = getTag(code)!
+  if (await alreadyScanned(player.id, code)) {
+    return { ok: false, title: tag.title, message: 'You have already faced this marker.', tag }
+  }
+  await recordScan(player.id, code, { type: 'POISON', declined: true })
+  await logEvent('POISON', player.id, null, { code, declined: true })
+  return { ok: true, title: tag.title, message: 'You resist the temptation and walk away unharmed.', tag }
 }
 
 async function resolveArtifact(player: Player, tag: TagDef): Promise<TagResult> {

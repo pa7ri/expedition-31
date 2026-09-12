@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { usePlayer } from '../lib/usePlayer'
@@ -17,6 +17,8 @@ import {
   submitChaos,
   submitCollapse,
   submitConvergence,
+  submitPoison,
+  declinePoison,
   type Player,
   type TagResult,
 } from '../lib/api'
@@ -49,20 +51,33 @@ export function Tag() {
   const [result, setResult] = useState<TagResult | null>(null)
   const [busy, setBusy] = useState(true)
 
+  // Resolve the scan exactly once per code. Without this guard, refresh() below swaps the
+  // `player` reference and would re-run resolveScan — the second pass hits the "already
+  // discovered" gate and clobbers the good reveal. We capture player via a ref so the effect
+  // doesn't depend on it.
+  const playerRef = useRef(player)
+  useEffect(() => {
+    playerRef.current = player
+  }, [player])
+  const resolvedFor = useRef<string | null>(null)
+
   useEffect(() => {
     if (loading) return
-    if (!player) return
+    const p = playerRef.current
+    if (!p) return
+    if (resolvedFor.current === code) return
+    resolvedFor.current = code
     if (!code) {
       setResult({ ok: false, title: 'No marker', message: 'This link has no marker code.' })
       setBusy(false)
       return
     }
-    resolveScan(player, code).then((r) => {
+    resolveScan(p, code).then((r) => {
       setResult(r)
       setBusy(false)
       if (!r.interactive) refresh()
     })
-  }, [code, player, loading, refresh])
+  }, [code, loading, refresh])
 
   if (loading || busy) return <div className="app center muted" style={{ marginTop: 60 }}>Reading the marker…</div>
 
@@ -100,6 +115,9 @@ export function Tag() {
   }
   if (result.ok && result.interactive === 'CHAOS_ROLL') {
     return <ChaosFlow player={player} code={code} onResolved={(r) => setResult(r)} />
+  }
+  if (result.ok && result.interactive === 'POISON_CHOICE') {
+    return <PoisonFlow player={player} code={code} onResolved={(r) => setResult(r)} initial={result} />
   }
 
   return (
@@ -290,6 +308,28 @@ function ChaosFlow({ player, code, onResolved }: { player: Player; code: string;
         <ArcaneButton variant="primary" disabled={busy} onClick={async () => { setBusy(true); onResolved(await submitChaos(player, code)) }}>
           Roll
         </ArcaneButton>
+      </RevealCard>
+    </div>
+  )
+}
+
+// ── Poison ───────────────────────────────────────────────────────────────
+function PoisonFlow({ player, code, onResolved, initial }: { player: Player; code: string; onResolved: (r: TagResult) => void; initial: TagResult }) {
+  const [busy, setBusy] = useState(false)
+  return (
+    <div className="app">
+      <RevealCard tagType="POISON" element={player.element}>
+        <div className="reveal-kind" style={{ color: 'var(--poison, #7bb342)' }}>Poison</div>
+        <h2>{initial.title}</h2>
+        <p className="muted">{initial.message}</p>
+        <div className="stack" style={{ marginTop: 12 }}>
+          <ArcaneButton variant="danger" disabled={busy} onClick={async () => { setBusy(true); onResolved(await submitPoison(player, code)) }}>
+            Take it
+          </ArcaneButton>
+          <ArcaneButton disabled={busy} onClick={async () => { setBusy(true); onResolved(await declinePoison(player, code)) }}>
+            Walk away
+          </ArcaneButton>
+        </div>
       </RevealCard>
     </div>
   )
