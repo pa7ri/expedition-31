@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ELEMENTS, ELEMENT_INFO, type Element } from '../game/elements'
+import { ELEMENT_INFO, type Element } from '../game/elements'
 import { registerPlayer } from '../lib/api'
 import { newSessionToken, setSessionToken } from '../lib/session'
+import { ElementPicker } from '../components/fx/ElementPicker'
+import { ArcaneButton } from '../components/fx/ArcaneButton'
+import { ParticleReveal } from '../components/fx/ParticleReveal'
 
 export function Register() {
   const nav = useNavigate()
@@ -19,7 +22,8 @@ export function Register() {
       const token = newSessionToken()
       await registerPlayer(name, element, token)
       setSessionToken(token)
-      nav('/game', { replace: true })
+      // Let the awakening burst play briefly before routing to the game.
+      setTimeout(() => nav('/game', { replace: true }), 620)
     } catch {
       setError('Could not register. Try a different name.')
       setBusy(false)
@@ -28,8 +32,11 @@ export function Register() {
 
   return (
     <div className="app">
+      {/* Fires an elemental burst when the player awakens. */}
+      <ParticleReveal kind={element ?? 'GOLD'} play={busy} />
+
       <div className="center" style={{ marginTop: 12 }}>
-        <h2 className="tracked">Welcome, Explorer</h2>
+        <h2 className="display tracked">Welcome, Explorer</h2>
       </div>
 
       <div className="card">
@@ -46,21 +53,8 @@ export function Register() {
 
       <div className="card">
         <label className="tracked muted" style={{ fontSize: 12 }}>Choose your element</label>
-        <div className="elements" style={{ marginTop: 10 }}>
-          {ELEMENTS.map((el) => {
-            const info = ELEMENT_INFO[el]
-            return (
-              <div
-                key={el}
-                className={`element-tile ${element === el ? 'selected' : ''}`}
-                data-el={el}
-                onClick={() => setElement(el)}
-              >
-                <span className="emoji">{info.emoji}</span>
-                <span className="name">{info.label}</span>
-              </div>
-            )
-          })}
+        <div style={{ marginTop: 10 }}>
+          <ElementPicker selected={element} onSelect={setElement} disabled={busy} />
         </div>
         {element && <p className="muted" style={{ marginTop: 12 }}>{ELEMENT_INFO[element].personality}</p>}
         <p className="muted" style={{ fontSize: 12 }}>⚠️ Once chosen, your element cannot be changed.</p>
@@ -68,9 +62,14 @@ export function Register() {
 
       {error && <div className="notice">{error}</div>}
 
-      <button className="btn primary" disabled={!name.trim() || !element || busy} onClick={submit}>
+      <ArcaneButton
+        variant="primary"
+        disabled={!name.trim() || !element || busy}
+        accent={element ? ELEMENT_INFO[element].color : undefined}
+        onClick={submit}
+      >
         {busy ? 'Awakening…' : 'Awaken my element ⚡'}
-      </button>
+      </ArcaneButton>
     </div>
   )
 }

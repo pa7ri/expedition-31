@@ -21,7 +21,7 @@ export function LeaderboardPage() {
   return (
     <div className="app">
       <Leaderboard rows={rows} highlightId={player?.id} />
-      <p className="muted center" style={{ fontSize: 12 }}>Only name, element and score are public. Missions and artifacts stay secret.</p>
+      <p className="muted center tracked" style={{ fontSize: 11 }}>Only name, element and score are public. Missions and artifacts stay secret.</p>
     </div>
   )
 }

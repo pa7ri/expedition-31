@@ -1,4 +1,6 @@
+import { motion } from 'framer-motion'
 import type { GameEvent } from '../lib/api'
+import { listContainer, listItem } from '../fx/variants'
 
 export interface FormattedEvent {
   icon: string
@@ -80,20 +82,20 @@ export function EventHistory({
 }) {
   if (events.length === 0) return <div className="muted" style={{ marginTop: 6 }}>{empty}</div>
   return (
-    <ul className="history">
+    <motion.ul className="history" variants={listContainer} initial="initial" animate="enter">
       {events.map((e) => {
         const f = formatEvent(e, playerId, nameOf)
         return (
-          <li key={e.id} className="history-row">
+          <motion.li key={e.id} className="history-row" variants={listItem}>
             <span className="history-icon">{f.icon}</span>
             <span className="history-text">{f.text}</span>
             {f.delta != null && f.delta !== 0 && (
               <span className={`history-delta ${f.delta > 0 ? 'pos' : 'neg'}`}>{f.delta > 0 ? `+${f.delta}` : f.delta}</span>
             )}
             <span className="history-time muted">{f.time}</span>
-          </li>
+          </motion.li>
         )
       })}
-    </ul>
+    </motion.ul>
   )
 }

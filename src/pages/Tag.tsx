@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { usePlayer } from '../lib/usePlayer'
-import { ELEMENTS, ELEMENT_INFO, type Element } from '../game/elements'
+import { ELEMENT_INFO, type Element } from '../game/elements'
+import type { TagType } from '../game/tags'
+import { RevealCard } from '../components/fx/RevealCard'
+import { ArcaneButton } from '../components/fx/ArcaneButton'
+import { ElementPicker } from '../components/fx/ElementPicker'
+import { Sigil } from '../components/fx/Sigil'
+import { CountUp } from '../components/fx/CountUp'
 import {
   joinGroup,
   listPlayers,
@@ -14,18 +21,22 @@ import {
   type TagResult,
 } from '../lib/api'
 
-/** Result banner shared by every flow. */
-function ResultBanner({ result }: { result: TagResult }) {
+/** Result reveal shared by every flow — animated per tag type, with a themed particle burst. */
+function ResultReveal({ result, element }: { result: TagResult; element: Element }) {
   const delta = result.delta
-  const cls = delta == null ? '' : delta > 0 ? 'win' : delta < 0 ? 'lose' : ''
+  const type = result.tag?.type
   return (
-    <div className={`card banner ${cls}`}>
+    <RevealCard tagType={type} element={element}>
+      {type && <div className="reveal-kind">{type}</div>}
       <h2>{result.title}</h2>
       <p className="muted">{result.message}</p>
       {delta != null && delta !== 0 && (
-        <div className={`delta ${delta > 0 ? 'pos' : 'neg'}`}>{delta > 0 ? `+${delta}` : delta}</div>
+        <div className={`reveal-delta ${delta > 0 ? 'pos' : 'neg'}`}>
+          {delta > 0 ? '+' : '−'}
+          <CountUp value={Math.abs(delta)} />
+        </div>
       )}
-    </div>
+    </RevealCard>
   )
 }
 
@@ -93,8 +104,8 @@ export function Tag() {
 
   return (
     <div className="app">
-      <ResultBanner result={result} />
-      <button className="btn primary" onClick={done}>Continue</button>
+      <ResultReveal result={result} element={player.element} />
+      <ArcaneButton variant="primary" onClick={done}>Continue</ArcaneButton>
     </div>
   )
 }
@@ -109,22 +120,23 @@ function BattleFlow({ player, code, onResolved }: { player: Player; code: string
 
   return (
     <div className="app">
-      <div className="card">
+      <div className="card" style={{ textAlign: 'center' }}>
+        <div className="reveal-kind" style={{ color: 'var(--fire)' }}>Battle</div>
         <h2>⚔️ Elemental Battle</h2>
         <p className="muted">Choose another explorer to challenge.</p>
         <div className="stack" style={{ marginTop: 10 }}>
           {players.map((p) => (
-            <button
+            <ArcaneButton
               key={p.id}
-              className="btn"
               disabled={busy}
+              accent={ELEMENT_INFO[p.element].color}
               onClick={async () => {
                 setBusy(true)
                 onResolved(await submitBattle(player, code, p.id))
               }}
             >
               {p.name} {ELEMENT_INFO[p.element].emoji}
-            </button>
+            </ArcaneButton>
           ))}
           {players.length === 0 && <div className="muted">No rivals yet.</div>}
         </div>
@@ -175,15 +187,37 @@ function GroupFlow({
     return <ConvergenceChoice player={player} code={code} onResolved={onResolved} />
   }
 
+  // Which elements are gathered so far — pull from the status message's element hints if present.
+  const type: TagType = kind === 'alliance' ? 'ALLIANCE' : 'MYSTERY'
   return (
     <div className="app">
-      <div className="card">
+      <div className="card" style={{ textAlign: 'center' }}>
         <h2>{status.title}</h2>
+        <GatheringSigils element={player.element} four={kind === 'group'} />
         <p className="muted">{status.message}</p>
         <div className="muted center" style={{ fontSize: 12 }}>
           {kind === 'alliance' ? 'Waiting for a partner to scan…' : 'Waiting for the elements to gather…'}
         </div>
+        <span className="reveal-kind" style={{ color: type === 'ALLIANCE' ? 'var(--water)' : 'var(--earth)' }}>{status.tag?.type ?? type}</span>
       </div>
+    </div>
+  )
+}
+
+/** Pulsing element sigils that represent the gathering circle while waiting. */
+function GatheringSigils({ element, four }: { element: Element; four: boolean }) {
+  const els: Element[] = four ? ['FIRE', 'WATER', 'EARTH', 'AIR'] : [element, element]
+  return (
+    <div className="gather">
+      {els.map((el, i) => (
+        <motion.div
+          key={i}
+          animate={{ opacity: [0.4, 1, 0.4], scale: [0.94, 1.04, 0.94] }}
+          transition={{ duration: 2, repeat: Infinity, delay: i * 0.3, ease: 'easeInOut' }}
+        >
+          <Sigil element={el} size={48} spin={false} />
+        </motion.div>
+      ))}
     </div>
   )
 }
@@ -192,18 +226,19 @@ function ConvergenceChoice({ player, code, onResolved }: { player: Player; code:
   const [busy, setBusy] = useState(false)
   return (
     <div className="app">
-      <div className="card center">
+      <RevealCard tagType="LEGENDARY" element={player.element}>
+        <div className="reveal-kind">Convergence</div>
         <h2>⚡ The Elements Have United</h2>
         <p className="muted">+300 each if you share. Or one explorer betrays for +600 while the rest get +150.</p>
         <div className="stack" style={{ marginTop: 12 }}>
-          <button className="btn" disabled={busy} onClick={async () => { setBusy(true); onResolved(await submitConvergence(code, null)) }}>
+          <ArcaneButton disabled={busy} onClick={async () => { setBusy(true); onResolved(await submitConvergence(code, null)) }}>
             🤝 SHARE — everyone keeps +300
-          </button>
-          <button className="btn danger" disabled={busy} onClick={async () => { setBusy(true); onResolved(await submitConvergence(code, player.id)) }}>
+          </ArcaneButton>
+          <ArcaneButton variant="danger" disabled={busy} onClick={async () => { setBusy(true); onResolved(await submitConvergence(code, player.id)) }}>
             😈 BETRAY — I take +600
-          </button>
+          </ArcaneButton>
         </div>
-      </div>
+      </RevealCard>
     </div>
   )
 }
@@ -211,26 +246,27 @@ function ConvergenceChoice({ player, code, onResolved }: { player: Player; code:
 // ── Collapse ─────────────────────────────────────────────────────────────
 function CollapseFlow({ player, code, onResolved }: { player: Player; code: string; onResolved: (r: TagResult) => void }) {
   const [busy, setBusy] = useState(false)
+  const [target, setTarget] = useState<Element | null>(null)
   return (
     <div className="app">
-      <div className="card center">
+      <RevealCard tagType="LEGENDARY" element={player.element} accent="#c0392b">
+        <div className="reveal-kind" style={{ color: '#ff5b35' }}>The Collapse</div>
         <h2>☄️ The Collapse</h2>
         <p className="muted">You wield the final elemental weapon. Choose an element to destroy — all its players lose 150.</p>
-        <div className="elements" style={{ marginTop: 12 }}>
-          {ELEMENTS.map((el: Element) => (
-            <button
-              key={el}
-              className="element-tile"
-              data-el={el}
-              disabled={busy}
-              onClick={async () => { setBusy(true); onResolved(await submitCollapse(player, code, el)) }}
-            >
-              <span className="emoji">{ELEMENT_INFO[el].emoji}</span>
-              <span className="name">Destroy {ELEMENT_INFO[el].label}</span>
-            </button>
-          ))}
+        <div style={{ marginTop: 12 }}>
+          <ElementPicker
+            selected={target}
+            disabled={busy}
+            labelFor={(el) => `Destroy ${ELEMENT_INFO[el].label}`}
+            onSelect={async (el) => {
+              if (busy) return
+              setTarget(el)
+              setBusy(true)
+              onResolved(await submitCollapse(player, code, el))
+            }}
+          />
         </div>
-      </div>
+      </RevealCard>
     </div>
   )
 }
@@ -240,13 +276,21 @@ function ChaosFlow({ player, code, onResolved }: { player: Player; code: string;
   const [busy, setBusy] = useState(false)
   return (
     <div className="app">
-      <div className="card center">
+      <RevealCard tagType="CHAOS" element={player.element}>
+        <div className="reveal-kind">Chaos</div>
         <h2>🌀 Chaos</h2>
         <p className="muted">Your element does not matter here. Roll the dice of fate.</p>
-        <button className="btn primary" disabled={busy} onClick={async () => { setBusy(true); onResolved(await submitChaos(player, code)) }}>
+        <motion.div
+          style={{ fontSize: 64, margin: '10px 0' }}
+          animate={busy ? { rotate: [0, 360, 720, 900] } : { rotate: 0 }}
+          transition={{ duration: 1.1, ease: 'easeOut' }}
+        >
+          🎲
+        </motion.div>
+        <ArcaneButton variant="primary" disabled={busy} onClick={async () => { setBusy(true); onResolved(await submitChaos(player, code)) }}>
           🎲 Roll
-        </button>
-      </div>
+        </ArcaneButton>
+      </RevealCard>
     </div>
   )
 }

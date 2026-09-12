@@ -1,4 +1,5 @@
 import { HashRouter, Link, Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 import { isConfigured } from './lib/supabase'
 import { Home } from './pages/Home'
 import { Register } from './pages/Register'
@@ -9,6 +10,8 @@ import { Admin } from './pages/Admin'
 import { Winner } from './pages/Winner'
 import { Final } from './pages/Final'
 import { PhaseAnnouncer } from './components/PhaseAnnouncer'
+import { ArcaneBackground } from './components/fx/ArcaneBackground'
+import { pageVariants } from './fx/variants'
 
 function Nav() {
   const { pathname } = useLocation()
@@ -36,22 +39,35 @@ function ConfigNotice() {
   )
 }
 
+/** Animated route wrapper — fades/slides each page as the location changes. */
+function AnimatedRoutes() {
+  const location = useLocation()
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div key={location.pathname} variants={pageVariants} initial="initial" animate="enter" exit="exit">
+        <Routes location={location}>
+          <Route path="/" element={<Home />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/game" element={<Game />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/scan" element={<ScanHelp />} />
+          <Route path="/tag" element={<Tag />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/final" element={<Final />} />
+          <Route path="/winner" element={<Winner />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
 export default function App() {
   if (!isConfigured) return <ConfigNotice />
   return (
     <HashRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/game" element={<Game />} />
-        <Route path="/leaderboard" element={<LeaderboardPage />} />
-        <Route path="/scan" element={<ScanHelp />} />
-        <Route path="/tag" element={<Tag />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/final" element={<Final />} />
-        <Route path="/winner" element={<Winner />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <ArcaneBackground />
+      <AnimatedRoutes />
       <Nav />
       <PhaseAnnouncer />
     </HashRouter>

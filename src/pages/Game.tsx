@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { usePlayer } from '../lib/usePlayer'
 import { PlayerCard } from '../components/PlayerCard'
 import { EventHistory } from '../components/EventHistory'
 import { listPlayers, playerEvents, type GameEvent, type Player } from '../lib/api'
+import { cardVariants } from '../fx/variants'
 
 export function Game() {
   const { player, rank, inventory, loading } = usePlayer()
@@ -34,11 +36,13 @@ export function Game() {
 
   return (
     <div className="app">
-      <PlayerCard player={player} rank={rank} inventory={inventory} />
-      <div className="card">
+      <motion.div variants={cardVariants} initial="initial" animate="enter">
+        <PlayerCard player={player} rank={rank} inventory={inventory} />
+      </motion.div>
+      <motion.div className="card" variants={cardVariants} initial="initial" animate="enter" transition={{ delay: 0.1 }}>
         <div className="tracked muted" style={{ fontSize: 12 }}>📜 Your History</div>
         <EventHistory events={events} playerId={player.id} nameOf={nameOf} empty="Scan a marker to begin your story." />
-      </div>
+      </motion.div>
     </div>
   )
 }

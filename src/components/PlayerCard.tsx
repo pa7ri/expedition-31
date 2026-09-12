@@ -2,7 +2,9 @@ import { ELEMENT_INFO, powerLines } from '../game/elements'
 import type { Player, InventoryItem } from '../lib/api'
 import { ARTIFACT_INFO } from '../game/tags'
 import { SECRET_MISSION } from '../game/challenges'
-import { ElementBadge } from './ElementBadge'
+import { Sigil } from './fx/Sigil'
+import { CountUp } from './fx/CountUp'
+import { glow } from '../fx/theme'
 
 export function PlayerCard({
   player,
@@ -16,19 +18,27 @@ export function PlayerCard({
   const info = ELEMENT_INFO[player.element]
   const power = powerLines(player.element)
   return (
-    <div className="card profile" style={{ borderColor: info.color }}>
+    <div
+      className="card profile"
+      style={{ borderColor: info.color, ['--el-glow' as string]: glow(info.color, 0.3) }}
+    >
+      <div className="profile-aura" aria-hidden />
       <div className="center tracked muted" style={{ fontSize: 12 }}>🧭 Birthday Quest</div>
-      <div className="center name" style={{ marginTop: 8 }}>{player.name}</div>
-      <div className="center" style={{ margin: '8px 0' }}>
-        <ElementBadge element={player.element} />
+      <div className="center" style={{ margin: '10px 0 6px' }}>
+        <Sigil element={player.element} size={84} />
       </div>
-      <div className="row" style={{ marginTop: 6 }}>
+      <div className="center name">{player.name}</div>
+      <div className="center tracked" style={{ color: info.color, fontSize: 13, marginTop: 2 }}>
+        {info.emoji} {info.label}
+      </div>
+
+      <div className="row" style={{ marginTop: 12 }}>
         <div>
-          <div className="energy">⚡ {player.score}</div>
+          <div className="energy">⚡ <CountUp value={player.score} /></div>
           <div className="muted" style={{ fontSize: 12 }}>ENERGY</div>
         </div>
         <div className="center">
-          <div style={{ fontSize: 28, fontWeight: 800 }}>#{rank}</div>
+          <div className="display" style={{ fontSize: 28, fontWeight: 800 }}>#{rank}</div>
           <div className="muted" style={{ fontSize: 12 }}>RANK</div>
         </div>
       </div>
