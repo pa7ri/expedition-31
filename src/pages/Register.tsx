@@ -7,15 +7,25 @@ import { ElementPicker } from '../components/fx/ElementPicker'
 import { ArcaneButton } from '../components/fx/ArcaneButton'
 import { ParticleReveal } from '../components/fx/ParticleReveal'
 
+/** Fixed shared entry code every new explorer must enter to register. */
+const REGISTER_PASSWORD = '240995'
+
+
 export function Register() {
   const nav = useNavigate()
   const [name, setName] = useState('')
+  const [password, setPassword] = useState('')
   const [element, setElement] = useState<Element | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function submit() {
-    if (!name.trim() || !element) return
+    if (!name.trim() || !element || busy) return
+    // Shared entry code — every explorer must know it to join the expedition.
+    if (password !== REGISTER_PASSWORD) {
+      setError('Wrong password. Ask the host for the entry code.')
+      return
+    }
     setBusy(true)
     setError(null)
     try {
@@ -52,6 +62,20 @@ export function Register() {
       </div>
 
       <div className="card">
+        <label className="tracked muted" style={{ fontSize: 12 }}>Entry password</label>
+        <input
+          className="input"
+          type="password"
+          inputMode="numeric"
+          autoComplete="off"
+          style={{ marginTop: 8 }}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Ask the host for the code"
+        />
+      </div>
+
+      <div className="card">
         <label className="tracked muted" style={{ fontSize: 12 }}>Choose your element</label>
         <div style={{ marginTop: 10 }}>
           <ElementPicker selected={element} onSelect={setElement} disabled={busy} />
@@ -64,7 +88,7 @@ export function Register() {
 
       <ArcaneButton
         variant="primary"
-        disabled={!name.trim() || !element || busy}
+        disabled={!name.trim() || !element || !password || busy}
         accent={element ? ELEMENT_INFO[element].color : undefined}
         onClick={submit}
       >

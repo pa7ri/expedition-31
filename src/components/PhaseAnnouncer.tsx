@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePhase } from '../lib/usePhase'
@@ -23,9 +23,16 @@ export function PhaseAnnouncer() {
   const { phase, previous } = usePhase()
   const nav = useNavigate()
   const [banner, setBanner] = useState<{ title: string; body: string; accent: string } | null>(null)
+  // Guard so each phase transition is announced exactly once. Realtime + the fallback poll
+  // both push phase updates, and the effect re-runs on every dependency change, so without
+  // this the same banner would flash repeatedly as the user interacts with the app.
+  const announcedRef = useRef<Phase | null>(null)
 
   useEffect(() => {
     if (!phase || previous === null) return // ignore the initial load
+    if (announcedRef.current === phase) return // already announced this phase
+    announcedRef.current = phase
+
     const a = PHASE_ANNOUNCEMENT[phase]
     if (a) setBanner({ ...a, accent: PHASE_ACCENT[phase] })
     if (phase === 'ENDED') {
